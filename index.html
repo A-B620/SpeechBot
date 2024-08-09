@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+       
+     
+        .sidetext {
+            
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+     
+        }
+       
+        input[type='radio']:checked{
+            background-color: #031524;
+        }
+        input[type='radio']:checked::before{
+            background-color: #031524;
+            display: block;
+            content: '';
+            padding: 6.5px;
+            border-radius: 100px;
+        }
+       
+
+        
+
+       
+
+
+
+    
+        @keyframes appearingtext {
+            0%{
+                width: 20%;
+             
+            }
+            25%{
+                width: 40%;
+               
+            }
+            50%{
+                width: 60;
+               
+            }
+            75%{
+                width: 80%;
+               
+            }
+            100%{
+                width: 100%;
+             
+            }
+            
+        }
+
+    </style>
+</head>
+<body class="flex items-center  justify-center  text-[#4b6c91] font-['Roboto'] font-bold  bg-gradient-to-bl from-[#0d3966] to-[#4b6c91]  h-screen">
+    
+    
+
+     <main class="flex bg-[#0d3966] border-2 border-[#03142c]   shadow-[5px_5px_30px_#03142c]  flex-col px-2 py-3 rounded-xl md:space-y-0 w-[365px] md:px-3   md:h-[550px] md:w-[900px] md:justify-end md:flex-row"> 
+
+        <div class="textbg rounded-xl bg-no-repeat bg-cover  border-2 border-[#031524] bg-[url(./assets/bgc.jpg)] text-[50px] md:h-[520px] md:w-[480px] md:mr-[10px] text-center content-center">
+            <span class="sidetext w-[100%] cursor-default">Text To Speech </span> 
+        </div>
+        
+       
+
+        <div class="rightside space-y-6 flex  flex-col    md:h-[520px]  ">
+            <div class="block py-1 mt-2 text-[#031524] font-semibold border-l-4 pl-3 md:rounded-l-lg md:rounded-b-lg  md:border-b-4 border-[#031524] text-[30px]   ">
+                <h1 class="float-start cursor-default">SpeechBot </h1>
+                <img src="./assets/wave.png" alt="" class="size-10  drop-shadow-[0px_0px_2px_#807ca6] bg-[#4b6c91] ring-1 ring-[#031524] float-end rounded-full">     
+            </div>
+             
+            <textarea name="usertext" id="" placeholder="Enter text" class="h-[100px] border-2 border-[#031524] px-2 pb-16 bg-[#0f2742] text-wrap overflow-y-hidden  rounded-md  md:pb-28   md:h-[150px] md:w-[400px]"></textarea>
+           
+            <div class="VoiceSection md:my-[20px] rounded-md  border-2 border-[#031524] py-2 px-3 bg-[#0f2742] w-fit space-x-6">
+                <span class="pr-3 border-r-[3px] border-[#4b6c91]">Voice</span>
+                <select name="voices" id="voiceOP" class=" bg-[#031524] overflow-hidden w-[70px] rounded-md">
+                   
+                </select>
+
+                <select name="lang" id="langOP" class="bg-[#031524] w-[70px] rounded-md" >
+          
+                </select>
+            </div>
+
+            <div class="speed  border-2 border-[#031524] rounded-lg py-2 px-2 w-fit bg-[#0f2742] space-x-5  md:my-[20px]">
+                <span class="pr-2 border-r-[3px] border-[#4b6c91]">Speed</span>
+                <input type="radio" name="speed" id="speed" value="0.5"> 0.5x
+                <input type="radio" name="speed" id="speed" value="1"> 1x
+                <input type="radio" name="speed" id="speed" value="1.5"> 1.5x
+                <input type="radio" name="speed" id="speed" value="2"> 2x
+            </div>
+           
+
+            <button class="btn rounded-[20px] self-center py-2  transition-all ease-in delay-150 hover:duration-150 border-2 border-[#031524] px-10 bg-[#03152467] hover:bg-[#031524] md:m-[20px] md-p-[0px]">Text-To-Speech</button>
+
+
+        </div>
+     </main>
+        
+        
+    <a href="https://github.com/A-B620" class="fixed bottom-1 left-1 block  w-[40px] p-0" ><img src="./assets/github.webp" alt="" class="rounded-full"></a>
+      
+       
+     
+</body>
+<script>
+  
+let usertext = document.querySelector('textarea'); // getting user's message/text
+let voicesOP = document.querySelector('#voiceOP'); // will insert the available voices as provided by the API in the HTML class 'voices'
+let languageOP = document.querySelector('#langOP'); // will insert the available languages as provided by the API in the HTML class 'languages'
+let convertbtn=document.querySelector('.btn'); // getting the btn
+
+const synth = window.speechSynthesis;
+let voicesAvailable = [];  // setting up an array which will hold the data of 'synth.getvoices()'
+
+function settingUpOptions() {
+    if ('speechSynthesis' in window) {
+        console.log('working');
+        voicesAvailable = synth.getVoices();// synth will return an array of object which will contain ; 1,voice name  2,voice URL  3,lang   4,local service   5,default
+        console.log(voicesAvailable);
+        for (let i = 0; i < voicesAvailable.length; i++) {   // creating options 
+            let VoiceOptions = document.createElement('option');// creating option for voices
+            let langOptions=document.createElement('option');  // creating option for languages
+
+            VoiceOptions.value = voicesAvailable[i].name;  // setting  up name
+            VoiceOptions.textContent = voicesAvailable[i].name;
+
+            langOptions.value = voicesAvailable[i].lang; // setting up languages
+            langOptions.textContent= voicesAvailable[i].lang;
+
+            // checking values
+            console.log('voice option created ;',VoiceOptions);
+            console.log('language option created ;',langOptions)
+
+            languageOP.appendChild(langOptions); // appending the lang option
+            voicesOP.appendChild(VoiceOptions); // appending the option into the DOM
+        }
+    } else {
+        console.log('not supported');
+    }
+};
+
+
+convertbtn.addEventListener('click',()=>{
+
+let utterance = new SpeechSynthesisUtterance(usertext.value);
+const voiceSelected=voicesOP.selectedOptions[0].value;
+
+
+
+
+const rate = document.querySelector('input[name="speed"]:checked')?.value || 1; // Default rate if none selected
+utterance.rate = parseFloat(rate);
+utterance.lang=languageOP.selectedOptions[0].value;
+speechSynthesis.speak(utterance);
+console.log(usertext.value);
+
+});
+ 
+        
+
+
+window.onload=settingUpOptions;
+
+
+
+
+</script>
+</html>
