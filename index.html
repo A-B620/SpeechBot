@@ -112,6 +112,10 @@
         utterance.rate = parseFloat(rate);
         utterance.lang = languageOP.selectedOptions[0]?.value || '';
         speechSynthesis.speak(utterance);
+        convertbtn.disabled = true;
+        setTimeout(() => {
+         convertbtn.disabled=false;
+       }, 1500);
         console.log(usertext.value);
     });
 
