@@ -71,55 +71,65 @@
     <a href="https://github.com/A-B620" class="fixed bottom-1 left-1 block w-[40px] p-0"><img src="./assets/github.webp" alt="" class="rounded-full"></a>
 </body>
 <script>
-    let usertext = document.querySelector('textarea');
-    let voicesOP = document.querySelector('#voiceOP');
-    let languageOP = document.querySelector('#langOP');
-    let convertbtn = document.querySelector('.btn');
+let usertext = document.querySelector('textarea'); // getting user's message/text
+let voicesOP = document.querySelector('#voiceOP'); // will insert the available voices as provided by the API in the HTML class 'voices'
+let languageOP = document.querySelector('#langOP'); // will insert the available languages as provided by the API in the HTML class 'languages'
+let convertbtn=document.querySelector('.btn'); // getting the btn
 
-    const synth = window.speechSynthesis;
-    let voicesAvailable = [];
+const synth = window.speechSynthesis;
+let voicesAvailable = [];  // setting up an array which will hold the data of 'synth.getvoices()'
 
-    function settingUpOptions() {
-        if ('speechSynthesis' in window) {
-            console.log('working');
-            voicesAvailable = synth.getVoices();
-            console.log(voicesAvailable);
-            for (let i = 0; i < voicesAvailable.length; i++) {
-                let VoiceOptions = document.createElement('option');
-                let langOptions = document.createElement('option');
+function settingUpOptions() {
+    if ('speechSynthesis' in window) {
+        console.log('working');
+        voicesAvailable = synth.getVoices();// synth will return an array of object which will contain ; 1,voice name  2,voice URL  3,lang   4,local service   5,default
+        console.log(voicesAvailable);
+        for (let i = 0; i < voicesAvailable.length; i++) {   // creating options 
+            let VoiceOptions = document.createElement('option');// creating option for voices
+            let langOptions=document.createElement('option');  // creating option for languages
 
-                VoiceOptions.value = voicesAvailable[i].name;
-                VoiceOptions.textContent = voicesAvailable[i].name;
+            VoiceOptions.value = voicesAvailable[i].name;  // setting  up name
+            VoiceOptions.textContent = voicesAvailable[i].name;
 
-                langOptions.value = voicesAvailable[i].lang;
-                langOptions.textContent = voicesAvailable[i].lang;
+            langOptions.value = voicesAvailable[i].lang; // setting up languages
+            langOptions.textContent= voicesAvailable[i].lang;
 
-                console.log('voice option created ;', VoiceOptions);
-                console.log('language option created ;', langOptions);
+            // checking values
+            console.log('voice option created ;',VoiceOptions);
+            console.log('language option created ;',langOptions)
 
-                languageOP.appendChild(langOptions);
-                voicesOP.appendChild(VoiceOptions);
-            }
-        } else {
-            console.log('not supported');
+            languageOP.appendChild(langOptions); // appending the lang option
+            voicesOP.appendChild(VoiceOptions); // appending the option into the DOM
         }
-    };
+    } else {
+        console.log('not supported');
+    }
+};
 
-    convertbtn.addEventListener('click', () => {
-        let utterance = new SpeechSynthesisUtterance(usertext.value);
-        const voiceSelected = voicesOP.selectedOptions[0]?.value || '';
-        const rate = document.querySelector('input[name="speed"]:checked')?.value || 1;
-        utterance.rate = parseFloat(rate);
-        utterance.lang = languageOP.selectedOptions[0]?.value || '';
-        speechSynthesis.speak(utterance);
-        convertbtn.disabled = true;
-        setTimeout(() => {
-         convertbtn.disabled=false;
-       }, 1500);
-        console.log(usertext.value);
-    });
+convertbtn.addEventListener('click', () => {
+    
+if (usertext.value == ''){  // a conditional statement which will check whether the user's entered value is blank/empty
+    console.log("alert");
+  alert('No Text Entered'); // an 'alert' will be send 
+}else{
 
-    window.onload = settingUpOptions;
-    synth.onvoiceschanged = settingUpOptions;
+// using SpeechSynthesis which is a Web Speech API.
+// For documentation visit '(https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis).
+let utterance = new SpeechSynthesisUtterance(usertext.value); // creating a object.
+const voiceSelected=voicesOP.selectedOptions[0].value;  // getting the selected option from the DOM of the html element 'select'.
+const rate = document.querySelector('input[name="speed"]:checked')?.value || 1; // Default rate if none selected.
+utterance.rate = parseFloat(rate); // converting rate into float(decimal).
+utterance.lang=languageOP.selectedOptions[0].value; //  getting the selected option from the DOM of the html element 'select'.
+speechSynthesis.speak(utterance); // using 'SpeechSynthesis' instance method 'speak' .
+
+convertbtn.disabled = true; // diabling the button once the audio/speech is played/spoken ,to avoid the speech from repeating itself.
+setTimeout(() => {   // setting an 'timeout function' which is enable the button after 500ms.
+    convertbtn.disabled=false;
+    convertbtn.style.background='#03152467';
+}, 500);}
+});
+
+    window.onload = settingUpOptions;// calling the function when the browser first loads
+    synth.onvoiceschanged = settingUpOptions; // calling the function whever the voices are changed.
 </script>
 </html>
